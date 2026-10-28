@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        mint: ["4.2.1157", "latest"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Syntax check
+        run: node --check privatus-analytics.js
+      - name: Unit tests and a real mint dev site
+        run: MINT_VERSION=${{ matrix.mint }} ./run-docker.sh
